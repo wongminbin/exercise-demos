@@ -3,7 +3,9 @@
 /.project
 /.mvn/
 /.settings/
+/tmlog.lck
+/tmlog10.log
 /mvnw
 /mvnw.cmd
 /target/
-/MANIFEST.MF
+/spring-shell.log
