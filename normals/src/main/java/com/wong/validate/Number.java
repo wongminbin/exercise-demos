@@ -1,0 +1,21 @@
+package com.wong.validate;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+/**
+* @author HuangZhibin
+* 
+* 2018年11月2日 下午2:10:47
+*/
+
+@Target({ElementType.FIELD})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Number {
+
+	Class<?> clazz();
+	
+	String defaultValue() default "";
+}

@@ -1,0 +1,11 @@
+/.classpath
+/.factorypath
+/.project
+/.mvn/
+/.settings/
+/tmlog.lck
+/tmlog10.log
+/mvnw
+/mvnw.cmd
+/target/
+/spring-shell.log
