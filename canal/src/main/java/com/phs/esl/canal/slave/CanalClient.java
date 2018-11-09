@@ -71,6 +71,11 @@ public class CanalClient implements ILogger {
 			CanalConnector connector = CanalConnectors.newSingleConnector(new InetSocketAddress(ip, port), destination, "", "");
 			try {
 				connector.connect();
+//				1.  所有表：.*   or  .*\\..*
+//				2.  canal schema下所有表： canal\\..*
+//				3.  canal下的以canal打头的表：canal\\.canal.*
+//				4.  canal schema下的一张表：canal.test1
+//				5. 多个规则组合使用：canal\\..*,mysql.test1,mysql.test2 (逗号分隔)
 				connector.subscribe(".*\\..*");
 				connector.rollback();
 				while (true) {
