@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -23,6 +24,7 @@ import com.alibaba.otter.canal.protocol.CanalEntry.EntryType;
 import com.alibaba.otter.canal.protocol.CanalEntry.EventType;
 import com.alibaba.otter.canal.protocol.CanalEntry.RowChange;
 import com.alibaba.otter.canal.protocol.CanalEntry.RowData;
+import com.google.common.util.concurrent.RateLimiter;
 import com.alibaba.otter.canal.protocol.Message;
 import com.phs.esl.canal.core.ILogger;
 import com.phs.esl.canal.database.entry.MyColumn;
@@ -87,6 +89,8 @@ public class CanalClient implements ILogger {
 					// 提交确认
 					connector.ack(batchId); 
 				}
+			} catch (Exception e) {
+				getLogger().error("error happened...", e);
 			} finally {
 				connector.disconnect();
 			}
@@ -94,7 +98,8 @@ public class CanalClient implements ILogger {
 		
 	}
 	
-	private ExecutorService pools = Executors.newFixedThreadPool(512);
+	private static final RateLimiter LIMITER = RateLimiter.create(512);
+	private static final Map<String, ExecutorService> CACHE_POOLS = new ConcurrentHashMap<>(256);
 
 	private void syncData(List<Entry> entrys, String remoteSchema) {
 		for (Entry entry : entrys) {
@@ -103,6 +108,8 @@ public class CanalClient implements ILogger {
 					|| !StringUtils.equals(remoteSchema, entry.getHeader().getSchemaName())) {
 				continue;
 			}
+			
+			LIMITER.acquire();
 
 			RowChange row = null;
 			try {
@@ -115,6 +122,9 @@ public class CanalClient implements ILogger {
 					entry.getHeader().getLogfileName(), entry.getHeader().getLogfileOffset(), 
 					DateFormatUtils.format(entry.getHeader().getExecuteTime(), "yyyy-MM-dd HH:mm:ss"),
 					entry.getHeader().getSchemaName(), entry.getHeader().getTableName(), row.getEventType());
+			
+			ExecutorService pools = CACHE_POOLS.computeIfAbsent(entry.getHeader().getTableName(), 
+					v -> Executors.newSingleThreadExecutor());
 			
 			EventType eventType = row.getEventType();
 			if (row.getIsDdl()) {

@@ -38,7 +38,7 @@ public class MyColumn {
 	
 	public enum MysqlType {
 		/** 数值类型 */
-		NUMBER((v) -> v, "tinyint", "smallint", "mediumint", "int", "integer", "bigint", "float", "double", "decimal"),
+		NUMBER((v) -> v, "bit", "tinyint", "smallint", "mediumint", "int", "integer", "bigint", "float", "double", "decimal"),
 		/** 字符类型 */
 		STRING((v) -> String.format("'%s'", v), "char", "varchar", "tinyblob", "blob", "mediumblob", "longblob", "tinytext", "mediumtext", "text", "longtext"),
 		/** 日期类型 */
@@ -59,7 +59,7 @@ public class MyColumn {
 					return mysqlType;
 				}
 			}
-			return null;
+			return STRING;
 		}
 	}
 	
