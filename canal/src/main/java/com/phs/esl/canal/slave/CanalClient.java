@@ -123,7 +123,7 @@ public class CanalClient implements ILogger {
 				getLogger().error("ERROR ## parser of eromanga-event has an error , data:" + entry.toString(), e);
 			}
 			Assert.notNull(row, "ERROR ROW DATA IS NULL");
-			getLogger().info("================>> binlog[{}:{}:{}] , name[{},{}] , eventType : {}",
+			getLogger().debug("================>> binlog[{}:{}:{}] , name[{},{}] , eventType : {}",
 					entry.getHeader().getLogfileName(), entry.getHeader().getLogfileOffset(), 
 					DateFormatUtils.format(entry.getHeader().getExecuteTime(), "yyyy-MM-dd HH:mm:ss"),
 					entry.getHeader().getSchemaName(), entry.getHeader().getTableName(), row.getEventType());
