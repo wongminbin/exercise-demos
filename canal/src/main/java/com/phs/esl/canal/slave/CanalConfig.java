@@ -55,6 +55,9 @@ public class CanalConfig {
 		
 		// DDL
 		commonds.put(EventType.CREATE, ddlService);
+		commonds.put(EventType.RENAME, ddlService);
+		commonds.put(EventType.CINDEX, ddlService);
+		commonds.put(EventType.DINDEX, ddlService);
 		commonds.put(EventType.ALTER,  ddlService);
 		
 		CanalClient canalClient = new CanalClient(commonds);
