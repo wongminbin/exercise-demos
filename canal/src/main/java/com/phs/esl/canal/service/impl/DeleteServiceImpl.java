@@ -1,9 +1,12 @@
 package com.phs.esl.canal.service.impl;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSON;
 import com.phs.esl.canal.dao.IBaseDao;
 import com.phs.esl.canal.database.entry.MyTable;
 import com.phs.esl.canal.database.entry.parse.ParseStatement;
@@ -46,6 +49,20 @@ public class DeleteServiceImpl extends AbstractBaseService implements IBaseServi
 		} catch (Exception e) {
 			getLogger().error(sql, e);
 		}
+	}
+	
+	@Override
+	protected void executePlaceholder(Map<String, Object> holders) {
+		try {
+			baseDao.updateKeyValue(holders);
+		} catch (Exception e) {
+			getLogger().error(JSON.toJSONString(holders), e);
+		}
+	}
+	
+	@Override
+	protected IBaseDao getDao() {
+		return baseDao;
 	}
 
 	@Override

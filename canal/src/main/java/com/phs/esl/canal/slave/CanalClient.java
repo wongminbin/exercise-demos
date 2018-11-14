@@ -135,6 +135,10 @@ public class CanalClient implements ILogger {
 			if (row.getIsDdl()) {
 				// DDL
 				String sql = row.getSql();
+				
+				// 如果对时间序列有严格要求，建议使用单线程处理同步数据
+				//POOLS.execute(() -> Optional.ofNullable(commonds.get(eventType)).ifPresent(cons -> cons.execute(sql)));
+				
 				pools.execute(() -> Optional.ofNullable(commonds.get(eventType)).ifPresent(cons -> cons.execute(sql)));
 			} else {
 				// DML
@@ -143,6 +147,9 @@ public class CanalClient implements ILogger {
 					MyTable table = new MyTable();
 					table.setTableName(entry.getHeader().getTableName());
 					table.setColumns(transferColumn(columns.get(eventType).apply(rowData)));
+					
+					// 如果对时间序列有严格要求，建议使用单线程处理同步数据
+					//POOLS.execute(() -> Optional.ofNullable(commonds.get(eventType)).ifPresent(cons -> cons.execute(table)));
 					
 					pools.execute(() -> Optional.ofNullable(commonds.get(eventType)).ifPresent(cons -> cons.execute(table)));
 				}

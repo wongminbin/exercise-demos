@@ -1,5 +1,10 @@
 package com.phs.esl.canal.service.impl;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,19 +28,37 @@ public class DDLServiceImpl extends AbstractBaseService implements IBaseService<
 	@Autowired
 	private IBaseDao baseDao;
 	
+	/** 过滤掉删表、删库、切断表等操作  */
+	private List<String> skipCommands = Arrays.asList("DROP", "TRUNCATE");
+	
 	@Override
 	public void execute(String sql) {
 		getLogger().debug(sql);
 		try {
+			for (String skip : skipCommands) {
+				if (StringUtils.startsWithIgnoreCase(sql, skip)) {
+					return;
+				}
+			}
 			baseDao.updateCommondSql(sql);
 		} catch (Exception e) {
 			getLogger().error(sql, e);
 		}
 	}
+	
+	@Override
+	protected void executePlaceholder(Map<String, Object> holders) {
+		throw new UnsupportedOperationException();
+	}
 
 	@Override
 	public void execute(MyTable t) {
 		throw new UnsupportedOperationException();
+	}
+	
+	@Override
+	protected IBaseDao getDao() {
+		return baseDao;
 	}
 
 	@Override

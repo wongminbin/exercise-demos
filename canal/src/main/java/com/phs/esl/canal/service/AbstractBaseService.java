@@ -1,7 +1,10 @@
 package com.phs.esl.canal.service;
 
+import java.util.Map;
+
 import org.springframework.transaction.annotation.Transactional;
 
+import com.phs.esl.canal.dao.IBaseDao;
 import com.phs.esl.canal.database.entry.MyTable;
 import com.phs.esl.canal.database.entry.parse.ParseStatement;
 
@@ -15,6 +18,14 @@ import com.phs.esl.canal.database.entry.parse.ParseStatement;
 public abstract class AbstractBaseService implements IBaseService<MyTable> {
 
 	/**
+	 * get dao
+	 * @author HuangZhibin
+	 *
+	 * @return
+	 */
+	protected abstract IBaseDao getDao();
+	
+	/**
 	 * get parse
 	 * @return
 	 */
@@ -27,11 +38,19 @@ public abstract class AbstractBaseService implements IBaseService<MyTable> {
 	 */
 	protected abstract boolean isExecute(MyTable table);
 	
+	/**
+	 * 
+	 * @author HuangZhibin
+	 *
+	 * @param holders
+	 */
+	protected abstract void executePlaceholder(Map<String, Object> holders);
+	
 	@Override
 	public void execute(MyTable table) {
 		if (isExecute(table)) {
-			String sql = getParse().parse(table);
-			execute(sql);
+			Map<String, Object> placeholders = getParse().parsePlaceholder(table);
+			executePlaceholder(placeholders);
 		}
 		
 	}

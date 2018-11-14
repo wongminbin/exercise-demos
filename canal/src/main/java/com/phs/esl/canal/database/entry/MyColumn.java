@@ -33,14 +33,30 @@ public class MyColumn {
 	private String mysqlType;
 	
 	public String getValue() {
+		return value;
+	}
+	
+	public String getValueFormatStr() {
 		return MysqlType.getMysqlType(mysqlType).function.apply(value);
+	}
+	
+	public String name(int i) {
+		return String.format("%s%d", name, i);
+	}
+	
+	public String namePlaceholder() {
+		return String.format("#{%s}", name);
+	}
+	
+	public String namePlaceholder(int i) {
+		return String.format("#{%s%d}", name, i);
 	}
 	
 	public enum MysqlType {
 		/** 数值类型 */
 		NUMBER((v) -> v, "bit", "tinyint", "smallint", "mediumint", "int", "integer", "bigint", "float", "double", "decimal"),
-		/** 字符类型, 对'进行转义 */
-		STRING((v) -> String.format("'%s'", StringUtils.replace(v, "'", "\\'")), "char", "varchar", "tinyblob", "blob", "mediumblob", "longblob", "tinytext", "mediumtext", "text", "longtext"),
+		/** 字符类型 */
+		STRING((v) -> String.format("'%s'", StringUtils.replace(v, "'", "\\'")), "char", "varchar", "binary", "varbinary", "tinyblob", "blob", "mediumblob", "longblob", "tinytext", "mediumtext", "text", "longtext"),
 		/** 日期类型 */
 		DATETIME((v) -> String.format("'%s'", v), "datetime", "timestamp", "year", "date", "time");
 		
@@ -62,5 +78,5 @@ public class MyColumn {
 			return STRING;
 		}
 	}
-	
+
 }

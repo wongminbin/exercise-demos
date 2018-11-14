@@ -22,6 +22,14 @@ public interface IBaseDao {
 	Map<String, Object> selectCommondSql(String sql);
 	
 	/**
+	 *  <pre>查询语句</pre>
+	 * @param sql
+	 */
+	@Select("${SELECT_SQL}")
+	Map<String, Object> selectKeyValue(Map<String, Object> values);
+	
+	
+	/**
 	 *  <pre>插入语句</pre>
 	 * @param sql
 	 */
@@ -29,11 +37,25 @@ public interface IBaseDao {
 	void insertCommondSql(String sql);
 	
 	/**
+	 *  <pre>插入语句</pre>
+	 * @param sql
+	 */
+	@Insert("${INSERT_SQL}")
+	void insertKeyValue(Map<String, Object> values);
+	
+	/**
 	 * <pre>更新语句</pre>
 	 * @param sql
 	 */
 	@Update("${value}")
 	void updateCommondSql(String sql);
+	
+	/**
+	 * <pre>更新语句</pre>
+	 * @param sql
+	 */
+	@Update("${UPDATE_SQL}")
+	void updateKeyValue(Map<String, Object> values);
 	
 	/**
 	 * <pre> 删除语句</pre>
