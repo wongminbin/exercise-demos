@@ -107,7 +107,22 @@
 		<dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-streams</artifactId>
+            <exclusions>
+            	<exclusion>
+            		<groupId>org.rocksdb</groupId>
+            		<artifactId>rocksdbjni</artifactId>
+            	</exclusion>
+            </exclusions>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.rocksdb/rocksdbjni -->
+        <!-- remove kafka-streams dependencies rocksdbjni, 重新引入新版本  解决kafka streams UnsatisfiedLinkError-->
+		<dependency>
+		    <groupId>org.rocksdb</groupId>
+		    <artifactId>rocksdbjni</artifactId>
+		    <version>5.15.10</version>
+		</dependency>
+        
+        
 		<dependency>
 			<groupId>org.springframework.retry</groupId>
 			<artifactId>spring-retry</artifactId>
