@@ -1,9 +1,13 @@
 package com.wong.h2;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.h2.jdbcx.JdbcConnectionPool;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +21,7 @@ import org.springframework.context.annotation.Configuration;
 public class H2Starter {
 
 	public static void main(String[] args) throws SQLException {
-		JdbcConnectionPool cp = JdbcConnectionPool.create("jdbc:h2:file:D:/data/sample;PAGE_SIZE=10240;MODE=MySQL", "sample", "sample");
+		JdbcConnectionPool cp = JdbcConnectionPool.create("jdbc:h2:file:D:/development/apache-tomcat-8.0.50/h2/phs;PAGE_SIZE=10240;MODE=MySQL;CACHE_SIZE=65536;LOCK_MODE=3;MULTI_THREADED=TRUE", "sample", "sample");
 		
 		Connection conn = cp.getConnection();
 		
@@ -41,7 +45,19 @@ public class H2Starter {
 		
 		
 		// retrive data
-		ResultSet result = stat.executeQuery("SELECT * FROM GOODS_INFO LIMIT 50");
+		ResultSet result = stat.executeQuery("SELECT COUNT(*) AS C FROM GOODS_INFO");
+		while (result.next()) {
+			System.out.println(result.getInt("C"));
+		}
+		
+		// retrive data
+		result = stat.executeQuery("SELECT COUNT(*) AS C FROM GOODS_SPEC_INFO");
+		while (result.next()) {
+			System.out.println(result.getInt("C"));
+		}
+		
+		// retrive data
+		result = stat.executeQuery("SELECT * FROM GOODS_INFO LIMIT 1000, 100");
 		while (result.next()) {
 		    System.out.println(result.getInt("ID") + ":" + result.getString("NAME") + ":" + result.getString("STYLE_NUM") + ":" + result.getString("FK_ORG_ID"));
 		}
@@ -50,13 +66,31 @@ public class H2Starter {
 		//stat.execute("DROP TABLE TEST");
 		//result = FullTextLucene.searchData(conn, "John", 0, 0);
 		System.out.println("==================================================");
-		result = stat.executeQuery("SELECT T.* FROM FTL_SEARCH_DATA('TB1320*', 50, 0) FT, GOODS_INFO T WHERE FT.TABLE = 'GOODS_INFO' AND T.ID = FT.KEYS[0] AND T.FK_ORG_ID = 1500008 ORDER BY FT.SCORE DESC");
+		
+		PreparedStatement pre = conn.prepareStatement(
+				  "SELECT T.* "
+				+ "FROM FTL_SEARCH_DATA('牛仔七分裤', 50, 0) FT, GOODS_INFO T "
+				+ "WHERE FT.TABLE = 'GOODS_INFO' AND T.ID = FT.KEYS[0] AND T.FK_ORG_ID = ANY(?) "
+				+ "ORDER BY FT.SCORE DESC");
+		
+		//pre.setString(1, "'圆领*'");
+		pre.setObject(1, Arrays.asList(1500000).toArray(new Integer[1])); //new Object[] {1500000}
+		
+		result = pre.executeQuery();
+		List<Integer> goodsIds = new ArrayList<>(50);
 		while (result.next()) {
 			System.out.println(result.getInt("ID") + ":" + result.getString("NAME") + ":" + result.getString("STYLE_NUM") + ":" + result.getString("FK_ORG_ID"));
+			goodsIds.add(result.getInt("ID"));
 		}
+		
+//		result = stat.executeQuery("SELECT T.* FROM FTL_SEARCH_DATA('APKXF*', 50, 0) FT, GOODS_INFO T WHERE FT.TABLE = 'GOODS_INFO' AND T.ID = FT.KEYS[0] AND T.FK_ORG_ID = 1500000 ORDER BY FT.SCORE DESC");
+//		while (result.next()) {
+//			System.out.println(result.getInt("ID") + ":" + result.getString("NAME") + ":" + result.getString("STYLE_NUM") + ":" + result.getString("FK_ORG_ID"));
+//		}
 		
 		result.close();
 		stat.close();
+		pre.close();
 		conn.close();
 		
 		
