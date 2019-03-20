@@ -62,5 +62,6 @@
 		<module>canal</module>
 		<module>spring-boot-demo</module>
 		<module>sys-metrics</module>
+		<module>crawler</module>
 	</modules>
 </project>

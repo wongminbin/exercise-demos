@@ -332,6 +332,14 @@
 			
 		<!-- JSON WEB TOKEN END -->
 		
+		<!-- https://mvnrepository.com/artifact/com.github.javaparser/javaparser-core -->
+		<!-- @see https://github.com/javaparser/javaparser Java抽象语法数解析器 -->
+		<dependency>
+		    <groupId>com.github.javaparser</groupId>
+		    <artifactId>javaparser-symbol-solver-core</artifactId>
+		    <version>3.13.1</version>
+		</dependency>
+		
 	</dependencies>
 	
 	<build>
